@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from appSM import views
 from rest_framework import permissions
@@ -10,17 +10,23 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.authentication import TokenAuthentication
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Smart Monitor API",    
-      default_version='',
-      description="",
-      terms_of_service="",
-      contact=openapi.Contact(""),
-      license=openapi.License(""),
+    openapi.Info(
+        title="Smart Monitor API",
+        default_version='v1',
+        description="",
+        terms_of_service="",
+        contact=openapi.Contact(email=""),
+        license=openapi.License(name=""),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
-    authentication_classes=(permissions.TokenAuthentication,),
+    security_definitions={
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
 )
 
 urlpatterns = [
@@ -28,7 +34,7 @@ urlpatterns = [
 
     path('hello/', views.helloword),
 
-    path('token/', obtain_auth_token, name='token'),
+    path('token/', obtain_auth_token, name='api_token_auth'),
 
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
