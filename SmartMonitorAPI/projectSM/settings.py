@@ -58,7 +58,7 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
-            'description': 'Enter your token. Example: `token_gerado`',
+            'description': 'Exemplo: `Token token_gerado`',
         }
     },
     'USE_SESSION_AUTH': False,
