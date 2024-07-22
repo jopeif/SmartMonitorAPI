@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from modelosML.StatisticalAnalysis import StatisticalAnalysis
+from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
 
 @api_view(['GET'])
@@ -17,7 +17,7 @@ def helloword(request):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def statis_analy(request):
-    response = StatisticalAnalysis(request)
+    response = Statistic_Analysis(request)
     return response
 
 @api_view(['GET'])
