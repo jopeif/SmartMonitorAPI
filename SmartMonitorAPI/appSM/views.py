@@ -7,5 +7,5 @@ from rest_framework import status, permissions
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def helloword(request):
-    data = {"message": "Hello, world!"}
+    data = {"Hello, world!"}
     return Response(data, status=status.HTTP_200_OK)
