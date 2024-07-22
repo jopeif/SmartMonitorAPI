@@ -19,3 +19,8 @@ def helloword(request):
 def statis_analy(request):
     response = StatisticalAnalysis(request)
     return response
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def RF():
+    return 'RF'
