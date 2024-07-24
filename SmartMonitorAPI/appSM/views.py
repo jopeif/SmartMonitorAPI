@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
+import json
+
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -33,6 +35,7 @@ modelo = joblib.load('.\modelosML\RandomForest\modelo.joblib')
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+
 def pred_RandomForest(request):
 
     try:
@@ -49,3 +52,15 @@ def pred_RandomForest(request):
     
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON inválido.'}, status=400)
+    
+def RF():
+    return 'RF'
+
+#TRATAMENTO DOS DADOS
+# @api_view(['POST'])
+# @permission_classes([permissions.IsAuthenticated])
+# def dataTreatment(.items):
+    
+#     for instituition, sensors in request.items():
+#         for sensorID, consumption in sensors.items():
+#             print(consumption)
