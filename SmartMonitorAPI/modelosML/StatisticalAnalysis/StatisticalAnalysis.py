@@ -6,7 +6,7 @@ import numpy as np
 def Statistic_Analysis(request):
     try:
         # Verificar se os dados foram fornecidos na requisição
-        if "data" not in request.data:
+        if 'data' not in request.data:
             return Response({"error": "Os dados não foram fornecidos."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Obter os dados fornecidos pelo usuário
@@ -51,4 +51,4 @@ def Statistic_Analysis(request):
         }, status=status.HTTP_200_OK)
     
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST) #quero receber os dados por json no post od swagger
