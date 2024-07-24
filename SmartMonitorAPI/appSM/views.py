@@ -35,7 +35,6 @@ modelo = joblib.load('.\modelosML\RandomForest\modelo.joblib')
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-
 def pred_RandomForest(request):
 
     try:
