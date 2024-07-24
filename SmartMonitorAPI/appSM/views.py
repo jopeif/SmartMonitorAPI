@@ -28,10 +28,10 @@ def RF():
     return 'RF'
 
 #TRATAMENTO DOS DADOS
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def dataTreatment(.items):
+# @api_view(['POST'])
+# @permission_classes([permissions.IsAuthenticated])
+# def dataTreatment(.items):
     
-    for instituition, sensors in request.items():
-        for sensorID, consumption in sensors.items():
-            print(consumption)
+#     for instituition, sensors in request.items():
+#         for sensorID, consumption in sensors.items():
+#             print(consumption)
