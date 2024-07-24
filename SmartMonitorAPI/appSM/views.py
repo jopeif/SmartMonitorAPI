@@ -30,14 +30,12 @@ def statis_analy(request):
     response = Statistic_Analysis(request)
     return response
 
-@api_view(['GET'])
-# Random Forest
-# Carregar o modelo ↓
-modelo = joblib.load('.\modelosML\RandomForest\modelo.joblib')
-
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def pred_RandomForest(request):
+    # Random Forest
+    # Carregar o modelo ↓
+    modelo = joblib.load('.\modelosML\RandomForest\modelo.joblib')
 
     try:
         data = json.loads(request.body)
