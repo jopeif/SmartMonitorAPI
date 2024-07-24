@@ -11,6 +11,9 @@ import json
 import joblib
 import numpy as np
 
+from appSM.serializers import MySerializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
@@ -26,9 +29,14 @@ def helloword():
 #ANALISE ESTATÍSTICA#
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def statis_analy(request):
+@swagger_auto_schema(
+    request_body=MySerializer,
+    responses={201: openapi.Response('Created', MySerializer)}
+)
+def statis_analys(request):
     response = Statistic_Analysis(request)
     return response
+
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -63,3 +71,12 @@ def RF():
 #     for instituition, sensors in request.items():
 #         for sensorID, consumption in sensors.items():
 #             print(consumption)
+from rest_framework.views import APIView
+
+class MyModelView(APIView):
+    @swagger_auto_schema(
+        request_body=MySerializer,
+        responses={201: openapi.Response('Created', MySerializer)}
+    )
+    def post(self, request):
+        serializer = MySerializer(data=request.data)
