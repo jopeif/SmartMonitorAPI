@@ -2,8 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import numpy as np
-
+from appSM.views import MySerializer
 def Statistic_Analysis(request):
+    input_data= MySerializer(data=request.data)
     try:
         # Verificar se os dados foram fornecidos na requisição
         if 'data' not in request.data:
