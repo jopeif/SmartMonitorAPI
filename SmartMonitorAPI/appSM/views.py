@@ -50,20 +50,23 @@ class Statis_Analys(APIView):
 class Pred_RandomForest(APIView):
     @permission_classes([permissions.IsAuthenticated])
     @swagger_auto_schema(
-        request_body=MySerializer,
-        responses={201: openapi.Response('Created', MySerializer)}
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id_sensor': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER))
+            }
+        ),
+        responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
     )
-    def post(request):
-        # Random Forest
-        # Carregar o modelo ↓
-        modelo = joblib.load('.\modelosML\RandomForest\modelo.joblib')
+    def post(self, request):
         try:
             data = json.loads(request.body)
             numbers = data.get('id_sensor', [])
             if len(numbers) != 1:
-                return JsonResponse({'error': 'A lista deve conter exatamente 1 números.'}, status=400)
+                return JsonResponse({'error': 'A lista deve conter exatamente 1 número.'}, status=400)
             
-            # Converte a lista para um array numpy e faz a predição
+            # Carregar o modelo e fazer a predição
+            modelo = joblib.load('./modelosML/RandomForest/modelo.joblib')
             numbers_array = np.array(numbers).reshape(1, -1)
             prediction = modelo.predict(numbers_array)[0]
             
