@@ -1,13 +1,14 @@
 from rest_framework.response import Response
 from rest_framework import status
 import numpy as np
+from datetime import datetime
 from appSM.serializers import MySerializer
 
 def Statistic_Analysis(data):
     try:
         # Verificar se os dados foram fornecidos
         if not data:
-            return Response({"error": "Os dados não foram fornecidos."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": f"Os dados não foram fornecidos.\n {data}"}, status=status.HTTP_400_BAD_REQUEST)
         
         # Verificar se a quantidade de dados fornecidos é igual a 30
         if len(data) != 30:
@@ -38,13 +39,16 @@ def Statistic_Analysis(data):
             classification = "ALTO"
         else:
             classification = "MUITO ALTO"
+
+
+        current_datetime = datetime.now()
+
+
+        timestamp_str = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
         
         return Response({
-            "current_consumption": float(current_consumption),
             "classification": classification,
-            "sma": float(sma),
-            "upper_band": float(upper_band),
-            "lower_band": float(lower_band)
+            "timestamp": timestamp_str
         }, status=status.HTTP_200_OK)
     
     except Exception as e:
