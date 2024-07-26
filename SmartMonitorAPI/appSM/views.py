@@ -35,7 +35,7 @@ class Statis_Analys(APIView):
         request_body=MySerializer,
         responses={201: openapi.Response('Created', MySerializer)}
     )
-    
+    #sadasdasd
     def post(self, request):
         serializer = MySerializer(data=request.data)
         if serializer.is_valid():
