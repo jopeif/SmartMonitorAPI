@@ -36,7 +36,6 @@ class Statis_Analys(APIView):
         responses={201: openapi.Response('Created', MySerializer)}
     )
     def post(self, request):
-        serializer = MySerializer(data=request.data)
         response = Statistic_Analysis(request)
         return response
 

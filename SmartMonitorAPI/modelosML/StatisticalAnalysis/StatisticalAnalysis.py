@@ -4,7 +4,6 @@ from rest_framework import status
 import numpy as np
 
 def Statistic_Analysis(request):
-    data=request.data
     try:
         # Verificar se os dados foram fornecidos na requisição
         if 'data' not in request.data:
