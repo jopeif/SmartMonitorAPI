@@ -23,7 +23,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', HelloWord.as_view()),
+    
     path('statistic/', Statis_Analys.as_view()),
     path('RandomForest/', Pred_RandomForest.as_view()),
 

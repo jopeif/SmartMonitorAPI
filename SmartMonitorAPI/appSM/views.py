@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 
 from rest_framework.views import APIView
+from django.http import HttpResponse
+
 
 import json
 
@@ -21,11 +23,11 @@ from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
 
 
-class HelloWord(APIView):
-    @permission_classes([permissions.IsAuthenticated])
-    def get(request):
-        data = {"Hello, world!"}
-        return Response(data, status=status.HTTP_200_OK)
+# class HelloWord(APIView):
+#     @permission_classes([permissions.IsAuthenticated])
+#     def get():
+#         data = {"Hello, world!"}
+#         return Response(data, status=status.HTTP_200_OK)
 
 
 #ANALISE ESTATÍSTICA#
@@ -75,7 +77,7 @@ class Pred_RandomForest(APIView):
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
         
 def RF():
-    return 'RF'
+    return {"RF"}
 
 #TRATAMENTO DOS DADOS
 # @api_view(['POST'])
@@ -91,5 +93,6 @@ class Exemplo(APIView):
         request_body=MySerializer,
         responses={201: openapi.Response('Created', MySerializer)}
     )
-    def post(self, request):
-        serializer = MySerializer(data=request.data)
+    def post(data, request):
+        serializer = MySerializer(data=request.data),
+        return HttpResponse(data)
