@@ -6,6 +6,7 @@ from rest_framework import status, permissions
 from rest_framework.views import APIView
 from django.http import HttpResponse
 
+from rest_framework.permissions import IsAuthenticated
 
 import json
 
@@ -23,16 +24,9 @@ from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
 
 
-# class HelloWord(APIView):
-#     @permission_classes([permissions.IsAuthenticated])
-#     def get():
-#         data = {"Hello, world!"}
-#         return Response(data, status=status.HTTP_200_OK)
-
-
 #ANALISE ESTATÍSTICA#
 class Statis_Analys(APIView):
-    @permission_classes([permissions.IsAuthenticated])
+    permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         request_body=MySerializer,
         responses={201: openapi.Response('Created', MySerializer)}
@@ -50,7 +44,7 @@ class Statis_Analys(APIView):
 
 
 class Pred_RandomForest(APIView):
-    @permission_classes([permissions.IsAuthenticated])
+    permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -90,10 +84,7 @@ def RF():
 #             print(consumption)
 
 class Exemplo(APIView):
-    @swagger_auto_schema(
-        request_body=MySerializer,
-        responses={201: openapi.Response('Created', MySerializer)}
-    )
-    def post(data, request):
-        serializer = MySerializer(data=request.data),
-        return HttpResponse(data)
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({"Funcionando!"})
