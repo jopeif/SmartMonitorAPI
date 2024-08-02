@@ -1,31 +1,37 @@
-# js={
-#     'ID.IFCE':{
-#         'ID-S':[0.2131,0.1244]
-#     },
-#     'ID.WEBER':{
-#         'ID-S-WEBER':[0.1342,0.4285]
-#     }
-# }
-# for i in js:
-#     print(i)
-# for uni,json in js.items():
-#     print(f'\nUnidade: {json}')
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
-#     for sensor,valor in json.items():
-#         print(f'Sensor: {sensor} \nConsumo: {valor}\n')
+Base_Dados = pd.read_excel('modelosML/RandomForest/dados_diario WEBER LUCAS.xlsx')
+
+Base_Dados.dropna(inplace=True)
+
+x = Base_Dados.iloc[:,0:1]  
+y = Base_Dados.iloc[:, 1]  
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+modelo = RandomForestRegressor(n_estimators=100, random_state=42)
+modelo.fit(x_train, y_train)
+
+previsor = modelo.predict(x_test)
+
+mse = mean_squared_error(y_test, previsor)
+print(f"Mean Squared Error: {mse}")
 
 
-json={
-    'CATEGORIA 1':{
-        'ID-SENSOR':['consumo', 0.2131,0.1244]
-    },
-    'ID.WEBER':{
-        'ID-S-':['consumo', 0.1342,0.4285]
-    }
-}
+def predict_next_number(model, last_30_numbers):
+    last_30_numbers = np.array(last_30_numbers).reshape(-1, 1)
+    return model.predict(last_30_numbers)[0]
 
-for var1, var2 in json.items():
-    print(f'Var1: {var1}\nVar2: {var2}')
-    for var3, var4 in var2.items():
-        print(f'var3: {var3}\nvar4: {var4}')
-    print('-------------')
+
+last_30_numbers = y.tail(30).values.reshape(-1, 1)
+predicted_next_number = predict_next_number(modelo, last_30_numbers)
+print("Predição do trigésimo primeiro número:", predicted_next_number)
+
+
+import joblib
+
+joblib.dump(modelo, 'modelosML/RandomForest/modeloPreverConsumo.joblib')

@@ -1,24 +1,18 @@
-from django.shortcuts import render
-from rest_framework.decorators import permission_classes
-from rest_framework.response import Response
-from rest_framework import status, permissions
-
-from rest_framework.views import APIView
-from django.http import HttpResponse
-
-from rest_framework.permissions import IsAuthenticated
-
-import json
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import json
 import joblib
 import numpy as np
-
-from appSM.serializers import MySerializer
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from appSM.serializers import MySerializer
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+from django.shortcuts import render
+from django.http import JsonResponse
 
 from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
@@ -45,6 +39,7 @@ class Statis_Analys(APIView):
 
 class Pred_RandomForest(APIView):
     permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -59,18 +54,23 @@ class Pred_RandomForest(APIView):
             data = json.loads(request.body)
             numbers = data.get('id_sensor', [])
             if len(numbers) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 número.'}, status=400)
+                return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
             
-            # Carregar o modelo e fazer a predição
-            modelo = joblib.load('./modelosML/RandomForest/modelo.joblib')
-            numbers_array = np.array(numbers).reshape(1, -1)
+            # Carregar o modelo
+            modelo = joblib.load('./modelosML/RandomForest/modeloPreverConsumo.joblib')
+            
+            # Transformar os números em um array 2D
+            numbers_array = np.array(numbers).reshape(-1, 1)
+            
+            # Fazer a previsão
             prediction = modelo.predict(numbers_array)[0]
             
-            return JsonResponse({'prediction': prediction})
+            return JsonResponse({'Predição do próximo consumo': prediction})
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
         
+
 def RF():
     return {"RF"}
 
