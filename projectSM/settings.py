@@ -66,7 +66,7 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': '',
-            'description': 'Exemplo: `Bearer token_gerado`',
+            'description': 'Exemplo: `token_gerado`',
         }
     },
     'USE_SESSION_AUTH': False,
