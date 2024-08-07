@@ -57,7 +57,7 @@ class Pred_RandomForest(APIView):
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
             
             # Carregar o modelo
-            modelo = joblib.load('./modelosML/RandomForest/modeloPreverConsumo.joblib')
+            modelo = joblib.load('modelosML/RandomForest/modeloPreverConsumo.joblib')
             
             # Transformar os números em um array 2D
             numbers_array = np.array(numbers).reshape(-1, 1)
@@ -70,18 +70,6 @@ class Pred_RandomForest(APIView):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
         
-
-def RF():
-    return {"RF"}
-
-#TRATAMENTO DOS DADOS
-# @api_view(['POST'])
-# @permission_classes([permissions.IsAuthenticated])
-# def dataTreatment(.items):
-    
-#     for instituition, sensors in request.items():
-#         for sensorID, consumption in sensors.items():
-#             print(consumption)
 
 class Exemplo(APIView):
     permission_classes = [IsAuthenticated]
