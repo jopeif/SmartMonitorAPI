@@ -40,9 +40,7 @@ def Statistic_Analysis(data):
         else:
             classification = "MUITO ALTO"
 
-
         current_datetime = datetime.now()
-
 
         timestamp_str = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
         

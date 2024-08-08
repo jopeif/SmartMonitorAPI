@@ -59,8 +59,8 @@ class Pred_RandomForest(APIView):
             # Carregar o modelo
             modelo = joblib.load('modelosML/RandomForest/modeloPreverConsumo.joblib')
             
-            # Transformar os números em um array 2D
-            numbers_array = np.array(numbers).reshape(-1, 1)
+            # Transformar os números em um array 2D com forma (1, 30)
+            numbers_array = np.array(numbers).reshape(1, -1)
             
             # Fazer a previsão
             prediction = modelo.predict(numbers_array)[0]
@@ -69,6 +69,8 @@ class Pred_RandomForest(APIView):
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
         
 
 class Exemplo(APIView):
