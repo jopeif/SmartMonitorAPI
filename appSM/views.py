@@ -51,27 +51,37 @@ class Pred_RandomForest(APIView):
     )
     def post(self, request):
         try:
+            # Decodificar o corpo da requisição
             data = json.loads(request.body)
             numbers = data.get('id_sensor', [])
+            
+            # Validar o comprimento da lista
             if len(numbers) != 30:
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
             
+            # Verificar se todos os elementos podem ser convertidos para float
+            try:
+                numbers = [float(num) for num in numbers]
+            except ValueError:
+                return JsonResponse({'error': 'Todos os valores devem ser números.'}, status=400)
+
             # Carregar o modelo
             modelo = joblib.load('modelosML/RandomForest/modeloPreverConsumo.joblib')
             
             # Transformar os números em um array 2D com forma (1, 30)
             numbers_array = np.array(numbers).reshape(1, -1)
             
-            # Fazer a previsão
-            prediction = modelo.predict(numbers_array)[0]
+            # Fazer a previsão e converter para float
+            prediction = float(modelo.predict(numbers_array)[0])
             
+            # Retornar a previsão em JSON
             return JsonResponse({'Predição do próximo consumo': prediction})
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-        
+            
 
 class Exemplo(APIView):
     permission_classes = [IsAuthenticated]
