@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('statistic/', Statis_Analys.as_view()),
     path('RandomForest/', Pred_RandomForest.as_view()),
+    
+    path('analiseEstatistica2/', calcular_analise_estatistica.as_view()),
 
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

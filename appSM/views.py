@@ -78,3 +78,24 @@ class Exemplo(APIView):
 
     def get(self, request):
         return Response({"Funcionando!"})
+    
+    
+    
+from modelosML.StatisticalAnalysis.analiseEstatistica import analise_estatistica
+
+class calcular_analise_estatistica(APIView):
+    
+    permission_classes = [IsAuthenticated]
+    @swagger_auto_schema(
+        request_body=MySerializer,
+        responses={201: openapi.Response('Created', MySerializer)}
+    )
+    
+    def post(self, request):
+        serializer = MySerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data.get('data', [])
+            print(data)
+            response = analise_estatistica(data)
+            return response
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
