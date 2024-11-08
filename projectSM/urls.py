@@ -25,16 +25,18 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('statistic/', Statis_Analys.as_view()),
-    path('RandomForest/', Pred_RandomForest.as_view()),
     
-    path('analiseEstatistica2/', calcular_analise_estatistica.as_view()),
-
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+
+    path('statistic/', calcular_analise_estatistica.as_view()),
+    path('RandomForest/', Pred_RandomForest.as_view()),
+    path('Test RF_Regressor/',TestRF_Regressor.as_view()),
+
+    #path('analiseEstatistica2/', calcular_analise_estatistica.as_view()),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-    path('Test RF_Regressor/',TestRF_Regressor.as_view())
+    
 ]
