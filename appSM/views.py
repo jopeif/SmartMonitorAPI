@@ -64,6 +64,8 @@ class Pred_RandomForest(APIView):
             
             # Fazer a previsão
             prediction = modelo.predict(numbers_array)[0]
+
+            prediction = float(prediction)
             
             return JsonResponse({'Predição do próximo consumo': prediction})
         
@@ -73,11 +75,42 @@ class Pred_RandomForest(APIView):
             return JsonResponse({'error': str(e)}, status=500)
         
 
-class Exemplo(APIView):
+class TestRF_Regressor(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return Response({"Funcionando!"})
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id_sensor': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER))
+            }
+        ),
+        responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
+    )
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            numbers = data.get('id_sensor', [])
+            if len(numbers) != 30:
+                return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
+            
+            # Carregar o modelo
+            modelo = joblib.load('modelosML/RandomForest/test.joblib')
+            
+            # Transformar os números em um array 2D com forma (1, 30)
+            numbers_array = np.array(numbers).reshape(1, -1)
+            
+            # Fazer a previsão
+            prediction = modelo.predict(numbers_array)[0]
+            
+            prediction = float(prediction)
+
+            return JsonResponse({'Predição do próximo consumo': prediction})
+        
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'JSON inválido.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     
     
     
