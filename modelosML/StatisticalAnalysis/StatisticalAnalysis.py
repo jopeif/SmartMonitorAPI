@@ -30,15 +30,15 @@ def Statistic_Analysis(data):
         # Classificar o consumo atual
         current_consumption = data_array[-1]
         if current_consumption < lower_band:
-            classification = "MUITO BAIXO"
+            classification = "Economia máxima"
         elif current_consumption < sma:
-            classification = "BAIXO"
+            classification = "Uso Eficiente"
         elif current_consumption < upper_band:
-            classification = "NORMAL"
+            classification = "Consumo Moderado"
         elif current_consumption < upper_band + std_dev:
-            classification = "ALTO"
+            classification = "Uso Elevado"
         else:
-            classification = "MUITO ALTO"
+            classification = "Consumo Excessivo"
 
         current_datetime = datetime.now()
 

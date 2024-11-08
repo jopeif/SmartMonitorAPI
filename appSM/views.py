@@ -52,7 +52,7 @@ class Pred_RandomForest(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            numbers = data.get('id_sensor', [])
+            numbers = data.get("id_sensor", [])
             if len(numbers) != 30:
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
             
@@ -78,6 +78,7 @@ class Exemplo(APIView):
 
     def get(self, request):
         return Response({"Funcionando!"})
+    
     
     
     
