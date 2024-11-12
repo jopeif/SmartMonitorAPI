@@ -1,6 +1,4 @@
 import json
-from termcolor import colored
-
 
 jsondata={
     "data":{ 
@@ -21,16 +19,32 @@ jsondata={
 
 keys = list(jsondata["data"])
 
+data={
+    "data":{
+        
+    }
+}
+
 for i in range(len(keys)):
     date = keys[i]
     value = jsondata["data"][date]
 
-    # Se o valor for None, pegue o valor da próxima data
-    if value is None and i + 1 < len(keys):
-        valueSucessor = jsondata["data"][keys[i + 1]]
-        valueAnterior = jsondata["data"][keys[i - 1]]
-        value = (valueSucessor + valueAnterior) / 2
-        
-        print(colored(f"Data: {date}, Valor: {value}","red"))
-    else:
-        print(f"Data: {date}, Valor: {value}")
+    # Se o valor for None, calcule uma média dos valores anterior e sucessor, se ambos existirem.
+    if value is None:
+        # Pega o valor sucessor se disponível
+        valueSucessor = jsondata["data"].get(keys[i + 1]) if i + 1 < len(keys) else None
+        # Pega o valor anterior se disponível
+        valueAnterior = jsondata["data"].get(keys[i - 1]) if i - 1 >= 0 else None
+
+        # Calcula a média somente se ambos os valores não são None
+        if valueSucessor is not None and valueAnterior is not None:
+            value = (valueSucessor + valueAnterior) / 2
+        elif valueAnterior is not None:
+            value = valueAnterior  
+        elif valueSucessor is not None:
+            value = valueSucessor  
+
+    # print(f"Data: {date}, Valor: {value:.5f}" if value is not None else f"Data: {date}, Valor: None")
+
+    data["data"][date] = value    
+print(data)
