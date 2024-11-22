@@ -1,50 +1,95 @@
 import json
 
 jsondata={
-    "data":{ 
-        "11/11/2024": 0.12334,
-        "12/11/2024": 0.13343,
-        "13/11/2024": None,
-        "14/11/2024": 0.02334,
-        "15/11/2024": 0.32334,
-        "16/11/2024": 0.32134,
-        "17/11/2024": None,
+    "Instituição 1":{
+        "Sensor 1":{ 
+            "11/11/2024": 0.42313,
+            "12/11/2024": 0.13343,
+            "13/11/2024": 0.45234,
+            "14/11/2024": 0.21452,
+            "15/11/2024": 0.12352,
+            "16/11/2024": 0.51232,
+            "17/11/2024": None,
+        },
+        "Sensor 2": {
+            "11/11/2024": None,
+            "12/11/2024": 0.34215,
+        },
+    },
+    "Instituição 2":{
+        "Sensor 21":{ 
+            "18/11/2024": 1.42313,
+            "19/11/2024": 0.13343,
+            "20/11/2024": None,
+            "21/11/2024": None,
+            "22/11/2024": 2.12352,
+            "23/11/2024": 3.51232,
+            "24/11/2024": 0.87231,
+        }
     }
 }
-# import pandas as pd
+import pandas as pd
 
-# df = pd.DataFrame.from_dict(jsondata["data"], orient="index", columns=["values"])
-# df["values"] = df["values"].interpolate(method="linear")
-# print(df)
 
-keys = list(jsondata["data"])
+jsondata_reestruturado = {}
 
-data={
-    "data":{
-        
-    }
-}
+# Iterar pelas instituições no JSON
+for instituicao, sensores in jsondata.items():
+    jsondata_reestruturado[instituicao] = {}
+    for sensor, leituras in sensores.items():
+        # Criar DataFrame com os dados do sensor
+        df = pd.DataFrame.from_dict(leituras, orient="index", columns=["values"])
+        # Preencher valores nulos com interpolação linear
+        df["values"] = df["values"].interpolate(method="linear", limit_direction="both")
+        # Converter de volta para dicionário
+        jsondata_reestruturado[instituicao][sensor] = df["values"].to_dict()
 
-for i in range(len(keys)):
-    date = keys[i]
-    value = jsondata["data"][date]
+# Agora, processar os dados interpolados
+# Apenas como exemplo, usaremos a primeira instituição e sensor
 
-    # Se o valor for None, calcule uma média dos valores anterior e sucessor, se ambos existirem.
-    if value is None:
-        # Pega o valor sucessor se disponível
-        valueSucessor = jsondata["data"].get(keys[i + 1]) if i + 1 < len(keys) else None
-        # Pega o valor anterior se disponível
-        valueAnterior = jsondata["data"].get(keys[i - 1]) if i - 1 >= 0 else None
+for instituicao, sensores in jsondata_reestruturado.items():
+    print(f"\nInstituição: {instituicao}")
+    for sensor, leituras in sensores.items():
+        print(f"  Sensor: {sensor}")
+        for data, valor in leituras.items():
+            print(f"    {data}: {valor}")
 
-        # Calcula a média somente se ambos os valores não são None
-        if valueSucessor is not None and valueAnterior is not None:
-            value = (valueSucessor + valueAnterior) / 2
-        elif valueAnterior is not None:
-            value = valueAnterior  
-        elif valueSucessor is not None:
-            value = valueSucessor  
 
-    # print(f"Data: {date}, Valor: {value:.5f}" if value is not None else f"Data: {date}, Valor: None")
 
-    data["data"][date] = value    
-print(data)
+
+
+
+
+
+
+
+
+
+# # Novo dicionário para armazenar os dados interpolados
+# jsondata_reestruturado = {}
+
+# # Iterar pelas instituições no JSON
+# for instituicao, sensores in jsondata.items():
+#     jsondata_reestruturado[instituicao] = {}
+#     for sensor, leituras in sensores.items():
+#         # Criar DataFrame com os dados do sensor
+#         df = pd.DataFrame.from_dict(leituras, orient="index", columns=["values"])
+#         # Preencher valores nulos com interpolação linear
+#         df["values"] = df["values"].interpolate(method="linear", limit_direction="both")
+#         # Converter de volta para dicionário
+#         jsondata_reestruturado[instituicao][sensor] = df["values"].to_dict()
+
+
+
+# for i in range(0, len(jsondata_reestruturado)):
+
+#     instituicoes = list(jsondata_reestruturado)[i]
+#     print(f'\n{'-'*50}\n{instituicoes}')
+
+#     sensores = list(jsondata_reestruturado[instituicoes].keys())
+#     for sensor in sensores:
+#         datas = list(jsondata_reestruturado[instituicoes][sensor].keys())
+#         print(f'{sensor} : ')
+#         for data in datas: 
+#             consumo = jsondata_reestruturado[instituicoes][sensor][data]
+#             print(f'    {data} : {consumo}')

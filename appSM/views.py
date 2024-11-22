@@ -79,26 +79,85 @@ class TestRF_Regressor(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'id_sensor': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER))
-            }
-        ),
-        responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
-    )
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'Instituição': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                additional_properties=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    additional_properties=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        additional_properties=openapi.Schema(
+                            type=openapi.TYPE_NUMBER,
+                            nullable=True
+                        )
+                    )
+                )
+            )
+        },
+        description="Dicionário com as instituições, sensores e valores associados às datas."
+    ),
+    responses={
+        200: openapi.Response(
+            'Success',
+            openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'prediction': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        description="Resultado da predição baseado nos dados fornecidos."
+                    )
+                }
+            )
+        )
+    }
+)
+    
     def post(self, request):
         try:
-            data = json.loads(request.body)
-            numbers = data.get('id_sensor', [])
-            if len(numbers) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
+            # Carregar e validar o JSON
+            jsondata = json.loads(request.body)
+            if "data" not in jsondata:
+                return Response({'error': 'JSON deve conter a chave "data".'}, status=400)
             
+            # Extrair as chaves e preparar o dicionário para valores preenchidos
+            keys = list(jsondata["data"].keys())
+            data_filled = {}
+
+            # Preencher os valores `None` com a média dos vizinhos
+            for i in range(len(keys)):
+                date = keys[i]
+                value = jsondata["data"][date]
+                
+                if value is None:
+                    # Pegar valores anterior e sucessor
+                    valueAnterior = jsondata["data"].get(keys[i - 1]) if i - 1 >= 0 else None
+                    valueSucessor = jsondata["data"].get(keys[i + 1]) if i + 1 < len(keys) else None
+                    
+                    # Calcular a média se ambos os valores existem
+                    if valueSucessor is not None and valueAnterior is not None:
+                        value = (valueSucessor + valueAnterior) / 2
+                    elif valueAnterior is not None:
+                        value = valueAnterior
+                    elif valueSucessor is not None:
+                        value = valueSucessor
+
+                # Atualizar o dicionário preenchido
+                data_filled[date] = value
+
+            # Extrair apenas os valores, ignorando as datas
+            values = list(data_filled.values())
+
+            # Verificar se há exatamente 30 valores
+            if len(values) != 30:
+                return Response({'error': 'O número de valores deve ser exatamente 30 após o preenchimento de nulos.'}, status=400)
+ 
             # Carregar o modelo
-            modelo = joblib.load('modelosML/RandomForest/test.joblib')
+            modelo = joblib.load('modelosML/RandomForest/Test/test.joblib')
             
             # Transformar os números em um array 2D com forma (1, 30)
-            numbers_array = np.array(numbers).reshape(1, -1)
+            numbers_array = np.array(values).reshape(1, -1)
             
             # Fazer a previsão
             prediction = modelo.predict(numbers_array)[0]
