@@ -5,49 +5,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 import joblib
 
-# Carregar os dados
-Base_Dados = pd.read_excel('./modelosML/Consumos/dados_diario WEBER LUCAS.xlsx')
-Base_Dados.dropna(inplace=True)
 
-consumo = Base_Dados['CONSUMO'].values
 
-def create_features_targets(data, window_size=30):
-    features, targets = [], []
-    for i in range(len(data) - window_size):
-        features.append(data[i:i + window_size])
-        targets.append(data[i + window_size])
-    return np.array(features), np.array(targets)
+def train_model():
 
-x, y = create_features_targets(consumo, window_size=30)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=122)
+    Base_Dados = pd.read_excel('./modelosML/Consumos/dados_diario WEBER LUCAS.xlsx')
+    Base_Dados.dropna(inplace=True)
+    consumo = Base_Dados['CONSUMO'].values
 
-modelo = XGBRegressor(
-    use_label_encoder=False,
-    eval_metric='rmse',  # Para regressão, "rmse" é uma métrica adequada
-    n_estimators=100,  # Número de árvores
-    max_depth=3,  # Profundidade máxima das árvores
-    learning_rate=0.01,  # Taxa de aprendizado
-    subsample=0.8,  # Subamostragem de dados
-    min_child_weight=3,  # Peso mínimo para folhas das árvores
-    gamma=0.5,  # Regularização para evitar overfitting
-    colsample_bytree=0.7  # Subamostragem de colunas para cada árvore
-)
-modelo.fit(x_train, y_train)
+    def create_features_targets(data, window_size=30):
+        features, targets = [], []
+        for i in range(len(data) - window_size):
+            features.append(data[i:i + window_size])
+            targets.append(data[i + window_size])
+        return np.array(features), np.array(targets)
 
-previsor = modelo.predict(x_test)
+    x, y = create_features_targets(consumo, window_size=30)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=122)
 
-def predict_next_number(model, last_numbers, window_size=30):
+    modelo = XGBRegressor(
+        use_label_encoder=False,
+        eval_metric='rmse',  # Para regressão, "rmse" é uma métrica adequada
+        n_estimators=100,  # Número de árvores
+        max_depth=3,  # Profundidade máxima das árvores
+        learning_rate=0.01,  # Taxa de aprendizado
+        subsample=0.8,  # Subamostragem de dados
+        min_child_weight=3,  # Peso mínimo para folhas das árvores
+        gamma=0.5,  # Regularização para evitar overfitting
+        colsample_bytree=0.7  # Subamostragem de colunas para cada árvore
+    )
+    modelo.fit(x_train, y_train)
+    return modelo
+    # previsor = modelo.predict(x_test)
+
+def predict_next_number(modelo, last_numbers, window_size=30):
+    if len(last_numbers) != window_size:
+        raise ValueError(f"O tamanho de last_numbers deve ser {window_size}, mas é {len(last_numbers)}.")
+    
     last_numbers = np.array(last_numbers).reshape(1, -1)
-    return model.predict(last_numbers)[0]
+    return modelo.predict(last_numbers)[0]
 
-# Exemplo de uso da função
-# Obtendo os últimos 30 valores de y para prever o próximo valor
-last_30_numbers = y[-30:]
-predicted_next_number = predict_next_number(modelo, last_30_numbers)
-print("Predição do trigésimo primeiro número:", predicted_next_number)
-
-# Salvar o modelo
-joblib.dump(modelo, 'modelosML/RandomForest/Test/test.joblib')
+modelo_treinado = train_model()
+ 
 
 
 

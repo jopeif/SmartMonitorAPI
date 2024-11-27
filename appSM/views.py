@@ -16,8 +16,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
-
-
+from modelosML.RandomForest.Test.test import train_model, predict_next_number
 
 #ANALISE ESTATÍSTICA#
 class Statis_Analys(APIView):
@@ -58,7 +57,7 @@ class Pred_RandomForest(APIView):
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
             
             # Carregar o modelo
-            modelo = joblib.load('modelosML/RandomForest/modeloPreverConsumo.joblib')
+            modelo = joblib.load('.modelosML/RandomForest/modeloPreverConsumo.joblib')
             
             # Transformar os números em um array 2D com forma (1, 30)
             numbers_array = np.array(numbers).reshape(1, -1)
@@ -106,13 +105,10 @@ class TestRF_Regressor(APIView):
         try:
             # Carregar e validar o JSON
             jsondata = json.loads(request.body)
-            
-    
+
             jsondata_reestruturado = {}
 
-            json_prediction={
-
-            }
+            json_prediction = {}
 
             # Iterar pelas instituições no JSON
             for instituicao, sensores in jsondata.items():
@@ -135,19 +131,20 @@ class TestRF_Regressor(APIView):
                     jsondata_reestruturado[instituicao][sensor] = df["values"].to_dict()
 
             for sensor in sensores:
+                modelo_trained = train_model()
+
                 keys=jsondata_reestruturado[instituicao][sensor]
 
                 # Extrair apenas os valores, ignorando as datas
                 values = list(keys.values())
 
-                modelo = joblib.load('modelosML/RandomForest/Test/test.joblib')
+                if len(values) < 30:
+                    print(f"Dados insuficientes para prever o consumo do sensor {sensor} na instituição {instituicao}.")
+                    continue
 
-                numbers_array = np.array(values).reshape(1, -1)
-
-                prediction = modelo.predict(numbers_array)[0]
-
-                prediction = float(prediction)
-                json_prediction[instituicao][sensor]=prediction
+                
+                prediction = predict_next_number(modelo_trained, values[-30:])
+                json_prediction[instituicao][sensor] = float(prediction)
 
             return JsonResponse(json_prediction)
         
