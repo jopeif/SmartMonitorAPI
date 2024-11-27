@@ -14,30 +14,12 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
 
+# Serviço predição
+from modelosAnalise.RandomForest.randomforest import RandomForestPrediction
+from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegressionPrediction
 
-
-#ANALISE ESTATÍSTICA#
-class Statis_Analys(APIView):
-    permission_classes = [IsAuthenticated]
-    @swagger_auto_schema(
-        request_body=MySerializer,
-        responses={201: openapi.Response('Created', MySerializer)}
-    )
-    
-    def post(self, request):
-        serializer = MySerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data.get('data', [])
-            print(data)
-            response = Statistic_Analysis(data)
-            return response
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-class Pred_RandomForest(APIView):
+class Analise_Predicao(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
@@ -49,40 +31,33 @@ class Pred_RandomForest(APIView):
         ),
         responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
     )
+
     def post(self, request):
         try:
             data = json.loads(request.body)
             numbers = data.get("id_sensor", [])
             if len(numbers) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 números.'}, status=400)
+                return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
             
-            # Carregar o modelo
-            modelo = joblib.load('modelosML/RandomForest/modeloPreverConsumo.joblib')
-            
-            # Transformar os números em um array 2D com forma (1, 30)
-            numbers_array = np.array(numbers).reshape(1, -1)
-            
-            # Fazer a previsão
-            prediction = modelo.predict(numbers_array)[0]
-            
-            return JsonResponse({'Predição do próximo consumo': prediction})
+
+            modelo = LinearRegressionPrediction()
+
+            # Treinar modelo
+            modelo.train(numbers)
+
+            # Realizar predição
+            previsao = modelo.prediction(30)
+
+            return JsonResponse({'Predição do próximo consumo': previsao}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
         
-
-class Exemplo(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response({"Funcionando!"})
     
-    
-    
-    
-from modelosML.StatisticalAnalysis.analiseEstatistica import analise_estatistica
+# Serviço classificação 
+from modelosAnalise.StatisticalAnalysis.analiseEstatistica import analise_estatistica
 
 class calcular_analise_estatistica(APIView):
     

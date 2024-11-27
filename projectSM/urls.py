@@ -24,17 +24,17 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Rotas da api
     path('admin/', admin.site.urls),
     path('statistic/', calcular_analise_estatistica.as_view()),
-    path('RandomForest/', Pred_RandomForest.as_view()),
-    
-    # path('analiseEstatistica2/', calcular_analise_estatistica.as_view()),
+    path('prediction/', Analise_Predicao.as_view()),
 
+
+    # Swagger
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-    path('poste/',Exemplo.as_view())
 ]
