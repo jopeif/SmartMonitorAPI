@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from modelosML.StatisticalAnalysis.StatisticalAnalysis import Statistic_Analysis
+from modelosML.StatisticalAnalysis.StatisticalAnalysis import analise_estatistica
 
 
 
@@ -30,8 +30,7 @@ class Statis_Analys(APIView):
         serializer = MySerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data.get('data', [])
-            print(data)
-            response = Statistic_Analysis(data)
+            response = analise_estatistica(data)
             return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -82,9 +81,3 @@ class Pred_RandomForest(APIView):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
             
-
-class Exemplo(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response({"Funcionando!"})
