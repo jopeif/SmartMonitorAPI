@@ -1,13 +1,11 @@
 import json
-import joblib
-import numpy as np
+from modelosAnalise.tratamento_dados import Tratamentodados
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from appSM.serializers import MySerializer
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -36,14 +34,17 @@ class Analise_Predicao(APIView):
         try:
             data = json.loads(request.body)
             numbers = data.get("id_sensor", [])
+
             if len(numbers) != 30:
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
             
+            tratamento_dados = Tratamentodados()
+            dados_dataframe = tratamento_dados.tratamento(numbers)
 
             modelo = LinearRegressionPrediction()
 
             # Treinar modelo
-            modelo.train(numbers)
+            modelo.train(dados_dataframe)
 
             # Realizar predição
             previsao = modelo.prediction(30)

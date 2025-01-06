@@ -1,8 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import status
 import numpy as np
-from datetime import datetime
-from appSM.serializers import MySerializer
 import pandas as pd
 
 

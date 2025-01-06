@@ -8,16 +8,15 @@ class LinearRegressionPrediction:
     def __init__(self):
         self.model = None
 
-    # Predição diária
     def train(self, data):
         x = np.arange(len(data)).reshape(-1, 1)
-        y = np.array(data)
+        y = np.array(data['Consumo'])
         self.model = LinearRegression()
         self.model.fit(x, y)
 
-    def prediction(self, consumos):
+    def prediction(self, indicePredicao):
         if self.model is None:
             raise ValueError("O modelo não foi treinado.")
 
-        dadosConsumo = np.array(consumos).reshape(1, -1)
-        return self.model.predict(dadosConsumo)[0]
+        valorPredicao = np.array(indicePredicao).reshape(1, -1)
+        return self.model.predict(valorPredicao)[0]
