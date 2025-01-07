@@ -33,13 +33,13 @@ class Analise_Predicao(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            numbers = data.get("id_sensor", [])
 
-            if len(numbers) != 30:
+            tratamento_dados = Tratamentodados()
+            dados_dataframe = tratamento_dados.tratamento(data)
+
+            if len(dados_dataframe) != 30:
                 return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
             
-            tratamento_dados = Tratamentodados()
-            dados_dataframe = tratamento_dados.tratamento(numbers)
 
             modelo = LinearRegressionPrediction()
 
