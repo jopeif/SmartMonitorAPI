@@ -3,6 +3,10 @@ import pandas as pd
 class Tratamentodados:
     @staticmethod
     def tratamento(dados_json):
-        consumo = dados_json["id_sensor"]
-        df = pd.DataFrame(consumo, columns=['Consumo'])
+        df = pd.DataFrame({'Data': dados_json.keys(), 'Consumo': dados_json.values()})
+
+        for indice in df.index:
+            if pd.isna(df.at[indice, 'Consumo']):
+                df.at[indice, 'Consumo'] = df['Consumo'].median()
+
         return df

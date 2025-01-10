@@ -8,14 +8,6 @@ import pandas as pd
 
 def analise_estatistica(data):
     try:
-        # Verificar se os dados foram fornecidos
-        if not data:
-            return Response({"error": f"Os dados não foram fornecidos.\n {data}"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Verificar se a quantidade de dados fornecidos é igual a 30
-        if len(data) != 30:
-            return Response({"error": "É necessário fornecer exatamente 30 valores de consumo."}, status=status.HTTP_400_BAD_REQUEST)
-        
         # Converter os dados fornecidos em um array numpy
         data_array = np.array(data)
         

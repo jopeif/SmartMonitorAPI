@@ -23,9 +23,7 @@ class Analise_Predicao(APIView):
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            properties={
-                'id_sensor': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_NUMBER))
-            }
+            additional_properties=openapi.Schema(type=openapi.TYPE_NUMBER)
         ),
         responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
     )
@@ -65,7 +63,7 @@ class calcular_analise_estatistica(APIView):
     permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         request_body=MySerializer,
-        responses={201: openapi.Response('Created', MySerializer)}
+        responses={201: openapi.Response('Classificado', MySerializer)}
     )
     
     def post(self, request):
