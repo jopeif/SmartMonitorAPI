@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-with open('jsondata.json', 'r') as arquivo_json:
+with open('./Testar modelo JSON/jsondata.json', 'r') as arquivo_json:
     jsondata = json.load(arquivo_json)
 
 jsondata_reestruturado = {}

@@ -5,3 +5,4 @@ class MySerializer(serializers.Serializer):
     data = serializers.ListField(
         child=serializers.FloatField()
     )       
+ 

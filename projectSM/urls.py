@@ -29,8 +29,8 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 
     path('statistic/', calcular_analise_estatistica.as_view()),
-    path('RandomForest/', Pred_RandomForest.as_view()),
-    path('Test RF_Regressor/',TestRF_Regressor.as_view()),
+    path('predict_next_month/', Next_month.as_view()),
+    path('predict_next_day/', Next_day.as_view()),
 
     #path('analiseEstatistica2/', calcular_analise_estatistica.as_view()),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
