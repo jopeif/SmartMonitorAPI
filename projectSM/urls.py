@@ -26,7 +26,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Rotas da api
     path('admin/', admin.site.urls),
-    path('statistic/', calcular_analise_estatistica.as_view()),
+    path('statistic/', analise_estatistica_geral.as_view()),
+    path('statistic/sensor/', analise_estatistica_sensor.as_view()),
     path('prediction/', Analise_Predicao.as_view()),
 
 

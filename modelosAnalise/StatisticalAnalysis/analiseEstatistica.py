@@ -8,15 +8,12 @@ import pandas as pd
 
 def analise_estatistica(data):
     try:
-        # Converter os dados fornecidos em um array numpy
-        data_array = np.array(data)
-        
         # Criação do DataFrame
-        df = pd.DataFrame({"Consumo": data_array})
+        df = pd.DataFrame({"Data": data['Data'], "Consumo": data['Consumo']})
         df["Média Móvel"] = df["Consumo"].rolling(window=7).mean()
         df["Desvio Padrão"] = df["Consumo"].rolling(window=7).std()
         
-        # Criação das bandas 
+        # Criação das bandas
         for i in range(1, 4):
             df[f"Banda Inferior {i}"] = df["Média Móvel"] - (i * df["Desvio Padrão"])
             df[f"Banda Superior {i}"] = df["Média Móvel"] + (i * df["Desvio Padrão"])
@@ -49,8 +46,6 @@ def analise_estatistica(data):
         df["Classificação"] = classificacoes
         
         
-        resposta = df.fillna("").to_dict(orient="records")
-        return Response(resposta, status=status.HTTP_200_OK)
-            
+        return df.fillna("").to_dict(orient="records")
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
