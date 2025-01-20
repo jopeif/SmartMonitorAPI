@@ -15,7 +15,7 @@ from django.http import JsonResponse
 
 # Serviço predição
 from modelosAnalise.RandomForest.randomforest import RandomForestPrediction
-from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegressionPrediction
+from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegressionPrediction, LinearRegression_Mensal
 
 class Analise_Predicao(APIView):
     permission_classes = [IsAuthenticated]
@@ -45,9 +45,46 @@ class Analise_Predicao(APIView):
             modelo.train(dados_dataframe)
 
             # Realizar predição
-            previsao = modelo.prediction(30)
+            previsao = modelo.prediction(31)
 
             return JsonResponse({'Predição do próximo consumo': previsao}, status=status.HTTP_200_OK)
+        
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'JSON inválido.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+        
+
+class Analise_predicao_mensal(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            additional_properties=openapi.Schema(type=openapi.TYPE_NUMBER)
+        ),
+        responses={200: openapi.Response('Success', openapi.Schema(type=openapi.TYPE_OBJECT, properties={'prediction': openapi.Schema(type=openapi.TYPE_NUMBER)}))}
+    )
+
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+
+            tratamento_dados = Tratamentodados()
+            dados_dataframe = tratamento_dados.tratamento(data)
+
+            if len(dados_dataframe) < 3 and len(dados_dataframe)>12:
+                return JsonResponse({'error': 'A lista deve conter quantidade de dados válidos(lista > 3 e lista < 13)'}, status=400)
+            
+            modelo = LinearRegression_Mensal()
+
+            # Treinar modelo
+            modelo.train(dados_dataframe)
+
+            # Realizar predição
+            previsao = modelo.prediction(len(dados_dataframe))
+
+            return JsonResponse({'Predição do consumo do próximo mês': (previsao-dados_dataframe['Acumulado'].iloc[-1])}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)

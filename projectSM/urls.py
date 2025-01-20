@@ -29,6 +29,7 @@ urlpatterns = [
     path('statistic/', analise_estatistica_geral.as_view()),
     path('statistic/sensor/', analise_estatistica_sensor.as_view()),
     path('prediction/', Analise_Predicao.as_view()),
+    path('prediction/mensal', Analise_predicao_mensal.as_view()),
 
 
     # Swagger

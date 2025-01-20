@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 class Tratamentodados:
     @staticmethod
@@ -8,5 +9,9 @@ class Tratamentodados:
         for indice in df.index:
             if pd.isna(df.at[indice, 'Consumo']):
                 df.at[indice, 'Consumo'] = df['Consumo'].median()
+
+        df["Acumulado"] = [np.nan for i in range(len(df))]
+
+        df["Acumulado"] = df['Consumo'].cumsum()
 
         return df
