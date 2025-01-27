@@ -12,9 +12,9 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from django.http import JsonResponse
 
-
+from JSONs import test_json
 # Serviço predição
-from modelosAnalise.RandomForest.randomforest import RandomForestPrediction
+from modelosAnalise.RandomForest.randomforest import model_trained_day, predict_next_day
 from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegressionPrediction, LinearRegression_Mensal
 
 class Analise_Predicao(APIView):
@@ -30,24 +30,18 @@ class Analise_Predicao(APIView):
 
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            # Carregar e validar o JSON
+            jsondata = json.loads(request.body)
+         
+            test_json.model_json(jsondata)
+            values=test_json.valores
 
-            tratamento_dados = Tratamentodados()
-            dados_dataframe = tratamento_dados.tratamento(data)
-
-            if len(dados_dataframe) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
+            if len(values) < 30:
+                print(f"Dados insuficientes para prever o consumo do sensor .")
             
+            prediction = predict_next_day(model_trained_day, values[-30:])
 
-            modelo = LinearRegressionPrediction()
-
-            # Treinar modelo
-            modelo.train(dados_dataframe)
-
-            # Realizar predição
-            previsao = modelo.prediction(31)
-
-            return JsonResponse({'Predição do próximo consumo': previsao}, status=status.HTTP_200_OK)
+            return JsonResponse({'Previsão para próximo dia': float(prediction)})
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
