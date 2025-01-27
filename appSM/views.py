@@ -47,9 +47,7 @@ class Next_day(APIView):
     )
 
     def post(self, request):
-        json_prediction={"Previsão próx. dia": {}}
         try:
-            # Carregar e validar o JSON
             jsondata = json.loads(request.body)
          
             test_json.model_json(jsondata)
@@ -59,9 +57,8 @@ class Next_day(APIView):
                 print(f"Dados insuficientes para prever o consumo do sensor .")
             
             prediction = predict_next_day(model_trained_day, values[-30:])
-            json_prediction['Previsão próx. dia'] = float(prediction)
 
-            return JsonResponse(json_prediction)
+            return JsonResponse({'Previsão próx. dia': float(prediction)})
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
@@ -77,9 +74,7 @@ class Next_month(APIView):
     )
 
     def post(self, request):
-        json_prediction={"Previsão próx. mês": {}}
         try:
-            # Carregar e validar o JSON
             jsondata = json.loads(request.body)
          
             test_json.model_json(jsondata)
@@ -89,9 +84,8 @@ class Next_month(APIView):
                 print(f"Dados insuficientes para prever o consumo do sensor .")
             
             prediction = predict_next_day(model_trained_day, values[-12:])
-            json_prediction['Previsão próx. mês'] = float(prediction)
-
-            return JsonResponse(json_prediction)
+            
+            return JsonResponse({'Previsão próx. mês': float(prediction)})
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
