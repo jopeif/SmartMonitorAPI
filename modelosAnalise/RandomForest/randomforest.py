@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 
 def train_model():
-    Base_Dados = pd.read_excel('./modelosML/Consumos/dados_diario WEBER LUCAS.xlsx')
+    Base_Dados = pd.read_excel('./modelosAnalise/Tabelas/dados_diario WEBER LUCAS.xlsx')
     Base_Dados.sort_values(by='DATA', inplace=True)
     consumo = Base_Dados['CONSUMO'].values
 
