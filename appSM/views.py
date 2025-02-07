@@ -14,8 +14,8 @@ from django.http import JsonResponse
 
 from JSONs import test_json
 # Serviço predição
-from modelosAnalise.RandomForest.randomforest import model_trained_day, predict_next_day
-from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegressionPrediction, LinearRegression_Mensal
+# from modelosAnalise.RandomForest.randomforest import model_trained_day, predict_next_day
+from modelosAnalise.LinearRegression.RegressaoLinear import LinearRegression_Acumulado
 
 class Analise_Predicao(APIView):
     permission_classes = [IsAuthenticated]
@@ -30,18 +30,23 @@ class Analise_Predicao(APIView):
 
     def post(self, request):
         try:
-            # Carregar e validar o JSON
-            jsondata = json.loads(request.body)
-         
-            test_json.model_json(jsondata)
-            values=test_json.valores
+            data = json.loads(request.body)
 
-            if len(values) < 30:
-                print(f"Dados insuficientes para prever o consumo do sensor .")
+            tratamento_dados = Tratamentodados()
+            dados_dataframe = tratamento_dados.tratamento(data)
+
+            if len(dados_dataframe) < 30:
+                return JsonResponse({'error': 'A lista deve conter pelo menos 30 dados de consumo.'}, status=400)
             
-            prediction = predict_next_day(model_trained_day, values[-30:])
+            modelo = LinearRegression_Acumulado()
 
-            return JsonResponse({'Previsão para próximo dia': float(prediction)})
+            # Treinar modelo
+            modelo.train(dados_dataframe)
+
+            # Realizar predição
+            previsao = modelo.prediction(len(dados_dataframe))
+
+            return JsonResponse({'Predição do próximo consumo': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
@@ -70,7 +75,7 @@ class Analise_predicao_mensal(APIView):
             if len(dados_dataframe) < 3 and len(dados_dataframe)>12:
                 return JsonResponse({'error': 'A lista deve conter quantidade de dados válidos(lista > 3 e lista < 13)'}, status=400)
             
-            modelo = LinearRegression_Mensal()
+            modelo = LinearRegression_Acumulado()
 
             # Treinar modelo
             modelo.train(dados_dataframe)
@@ -78,7 +83,7 @@ class Analise_predicao_mensal(APIView):
             # Realizar predição
             previsao = modelo.prediction(len(dados_dataframe))
 
-            return JsonResponse({'Predição do consumo do próximo mês': (previsao-dados_dataframe['Acumulado'].iloc[-1])}, status=status.HTTP_200_OK)
+            return JsonResponse({'Predição do consumo do próximo mês': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)

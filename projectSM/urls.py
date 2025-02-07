@@ -28,8 +28,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('statistic/', analise_estatistica_geral.as_view()),
     path('statistic/sensor/', analise_estatistica_sensor.as_view()),
+    # Predição individual do sensor
     path('prediction/', Analise_Predicao.as_view()),
-    path('prediction/mensal', Analise_predicao_mensal.as_view()),
+    # Predição mensal. 
+    path('prediction/mouthly', Analise_predicao_mensal.as_view()),
 
 
     # Swagger

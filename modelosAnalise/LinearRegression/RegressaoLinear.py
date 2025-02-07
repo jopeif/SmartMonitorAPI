@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-
+# Descontinuado
 class LinearRegressionPrediction:
     def __init__(self):
         self.model = None
@@ -22,7 +22,7 @@ class LinearRegressionPrediction:
         return self.model.predict(valorPredicao)[0]
 
 
-class LinearRegression_Mensal:
+class LinearRegression_Acumulado:
     def __init__(self):
         self.model = None
 
