@@ -46,7 +46,7 @@ class Analise_Predicao(APIView):
             # Realizar predição
             previsao = modelo.prediction(len(dados_dataframe))
 
-            return JsonResponse({'Predição do próximo consumo': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
+            return JsonResponse({'Prediction': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
@@ -83,7 +83,7 @@ class Analise_predicao_mensal(APIView):
             # Realizar predição
             previsao = modelo.prediction(len(dados_dataframe))
 
-            return JsonResponse({'Predição do consumo do próximo mês': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
+            return JsonResponse({'Prediction': (abs(previsao-dados_dataframe['Acumulado'].iloc[-1]))}, status=status.HTTP_200_OK)
         
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
@@ -94,50 +94,7 @@ class Analise_predicao_mensal(APIView):
 # Serviço classificação 
 from modelosAnalise.StatisticalAnalysis.analiseEstatistica import analise_estatistica
 
-class analise_estatistica_geral(APIView):
-    
-    permission_classes = [IsAuthenticated]
-
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            additional_properties=openapi.Schema(type=openapi.TYPE_NUMBER)
-        ),
-        responses={
-            200: openapi.Response(
-                'Success',
-                openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={'Classificação geral': openapi.Schema(type=openapi.TYPE_STRING)}
-                )
-            ),
-            400: openapi.Response('Bad Request'),
-            500: openapi.Response('Internal Server Error'),
-        }
-    )
-
-    
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-
-            tratamento_dados = Tratamentodados()
-            dados_dataframe = tratamento_dados.tratamento(data)
-
-            if len(dados_dataframe) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
-            
-            classificacao = analise_estatistica(dados_dataframe)
-
-            return JsonResponse({'Classificação geral': classificacao}, status=status.HTTP_200_OK)
-        
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'JSON inválido.'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-        
-
-class analise_estatistica_sensor(APIView):
+class Analise_estatistica(APIView):
     
     permission_classes = [IsAuthenticated]
 
@@ -150,14 +107,15 @@ class analise_estatistica_sensor(APIView):
     )
     
     def post(self, request):
+        print(self, request)
         try:
             data = json.loads(request.body)
 
             tratamento_dados = Tratamentodados()
             dados_dataframe = tratamento_dados.tratamento(data)
 
-            if len(dados_dataframe) != 30:
-                return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
+            # if len(dados_dataframe) != 30:
+            #     return JsonResponse({'error': 'A lista deve conter exatamente 30 dados de consumo.'}, status=400)
 
             classificacao = analise_estatistica(dados_dataframe)
 
