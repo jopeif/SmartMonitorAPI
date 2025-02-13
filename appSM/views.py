@@ -72,7 +72,7 @@ class Analise_predicao_mensal(APIView):
             tratamento_dados = Tratamentodados()
             dados_dataframe = tratamento_dados.tratamento(data)
 
-            if len(dados_dataframe) < 3 and len(dados_dataframe)>12:
+            if len(dados_dataframe) < 3 or len(dados_dataframe)>12:
                 return JsonResponse({'error': 'A lista deve conter quantidade de dados válidos(lista > 3 e lista < 13)'}, status=400)
             
             modelo = LinearRegression_Acumulado()
