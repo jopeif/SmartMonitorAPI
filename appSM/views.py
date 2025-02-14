@@ -35,8 +35,8 @@ class Analise_Predicao(APIView):
             tratamento_dados = Tratamentodados()
             dados_dataframe = tratamento_dados.tratamento(data)
 
-            if len(dados_dataframe) < 30:
-                return JsonResponse({'error': 'A lista deve conter pelo menos 30 dados de consumo.'}, status=400)
+            # if len(dados_dataframe) < 30:
+            #     return JsonResponse({'error': 'A lista deve conter pelo menos 30 dados de consumo.'}, status=400)
             
             modelo = LinearRegression_Acumulado()
 
@@ -68,12 +68,13 @@ class Analise_predicao_mensal(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body)
+            print(data)
 
             tratamento_dados = Tratamentodados()
             dados_dataframe = tratamento_dados.tratamento(data)
 
-            if len(dados_dataframe) < 3 or len(dados_dataframe)>12:
-                return JsonResponse({'error': 'A lista deve conter quantidade de dados válidos(lista > 3 e lista < 13)'}, status=400)
+            # if len(dados_dataframe) < 3 or len(dados_dataframe)>12:
+            #     return JsonResponse({'error': 'A lista deve conter quantidade de dados válidos(lista > 3 e lista < 13)'}, status=400)
             
             modelo = LinearRegression_Acumulado()
 
