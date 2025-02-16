@@ -25,7 +25,7 @@ module.exports = {
       host: 'smartmonitor.ifce.edu.br',
       ref: 'origin/main',
       repo: 'https://github.com/douglasnobree/SmartMonitorAPI.git',
-      path: '/home/jarbas/django-api',
+      path: '/home/jarbas/iot-django',
       'post-deploy':
         'export PATH=$PATH:/home/jarbas/.virtualenvs/django-env/bin && source /home/jarbas/.virtualenvs/django-env/bin/activate && pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput && pm2 reload ecosystem.config.js --env production',
     },
