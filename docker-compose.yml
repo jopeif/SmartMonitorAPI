@@ -1,11 +1,20 @@
 version: '3.8'
 
 services:
-  django:
-    image: docker-api-python
+  web:
+    build: .
+    image: smart-monitor-api
+    command: gunicorn projectSM.wsgi:application --bind 0.0.0.0:8000 --workers 3
     volumes:
       - .:/app
-    build: .
+      - static_volume:/app/staticfiles
+      - ./static:/app/static
     ports:
       - "8000:8000"
+    environment:
+      - DEBUG=0
+      - DJANGO_SETTINGS_MODULE=projectSM.settings
     restart: always
+
+volumes:
+  static_volume:
