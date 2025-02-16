@@ -120,7 +120,7 @@ class Analise_estatistica(APIView):
 
             classificacao = analise_estatistica(dados_dataframe)
 
-            return JsonResponse({ 'Data': classificacao[-1]['Data'], 'Consumo': classificacao[-1]['Consumo'],'Classificação': classificacao[-1]['Classificação']}, status=status.HTTP_200_OK)
+            return JsonResponse({ 'Data': classificacao[-1]['Data'], 'Consumo': classificacao[-1]['Consumo'],'classificacao': classificacao[-1]['Classificação']}, status=status.HTTP_200_OK)
 
         except json.JSONDecodeError:
             return JsonResponse({'error': 'JSON inválido.'}, status=400)
