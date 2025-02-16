@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'django-api',
-      script: 'gunicorn',
+      script: '/home/jarbas/.virtualenvs/django-env/bin/gunicorn',  // Caminho absoluto para o gunicorn no ambiente virtual
       args: 'config.wsgi:application --bind 0.0.0.0:8000 --workers 3',
       exec_mode: 'fork',
       autorestart: true,
