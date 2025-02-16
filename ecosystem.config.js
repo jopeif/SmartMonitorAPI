@@ -3,17 +3,17 @@ module.exports = {
     {
       name: 'django-api',
       script: '/home/jarbas/.virtualenvs/django-env/bin/gunicorn', // Caminho absoluto para o gunicorn no ambiente virtual
-      args: 'config.wsgi:application --bind 0.0.0.0:8000 --workers 3',
+      args: 'projectSM.wsgi:application --bind 0.0.0.0:8000 --workers 3 --pythonpath /home/jarbas/iot-django/source',
       exec_mode: 'fork',
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',
       env: {
-        DJANGO_SETTINGS_MODULE: 'config.settings',
+        DJANGO_SETTINGS_MODULE: 'projectSM.settings', // Ajustado para refletir o nome correto do módulo de configurações
         ENV: 'development',
       },
       env_production: {
-        DJANGO_SETTINGS_MODULE: 'config.settings',
+        DJANGO_SETTINGS_MODULE: 'projectSM.settings', // Ajustado para refletir o nome correto do módulo de configurações
         ENV: 'production',
       },
     },
