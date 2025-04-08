@@ -14,4 +14,6 @@ class Tratamentodados:
 
         df["Acumulado"] = df['Consumo'].cumsum()
 
+        df = df.loc[df['Consumo'] > 0.1]
+
         return df
